@@ -87,9 +87,7 @@ User.prototype.register = function() {
 }
 
 User.prototype.getAvatar = function() {
-  console.log(this.data.email)
   this.avatar = `https://gravatar.com/avatar/${md5(this.data.email)}?s=128`
-  console.log(this.avatar)
 }
 
 module.exports = User
