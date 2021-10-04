@@ -77,9 +77,9 @@ exports.home = async function(req, res) {
   if (req.session.user) {
     // fetch feed of posts for current user
     let posts = await Post.getFeed(req.session.user._id)
-    res.render('home-dashboard', {posts: posts})
+    res.render('home-dashboard', {title: 'Dashboard', posts: posts})
   } else {
-    res.render('home-guest', {regErrors: req.flash('regErrors')})
+    res.render('home-guest', {title: 'Home', regErrors: req.flash('regErrors')})
   }
 }
 
@@ -88,7 +88,7 @@ exports.ifUserExists = function(req, res, next) {
     req.profileUser = userDocument
     next()
   }).catch(function() {
-    res.render("404")
+    res.render({title: "Not Found"}, "404")
   })
 } 
 
@@ -96,6 +96,7 @@ exports.profilePostsScreen = function(req, res) {
   // ask our post model for posts by a certain author id
   Post.findByAuthorId(req.profileUser._id).then(function(posts) {
     res.render('profile', {
+      title: `Profile for ${req.profileUser.username}`,
       currentPage: "posts",
       posts: posts,
       profileUsername: req.profileUser.username,
@@ -105,7 +106,7 @@ exports.profilePostsScreen = function(req, res) {
       counts: {postCount: req.postCount, followerCount: req.followerCount, followingCount: req.followingCount}
     })
   }).catch(function() {
-    res.render("404")
+    res.render({title: "Not Found"}, "404")
   })
 }
 
@@ -113,6 +114,7 @@ exports.profileFollowersScreen = async function(req, res) {
   try {
     let followers = await Follow.getFollowersById(req.profileUser._id)
     res.render('profile-followers', {
+      title: `Followers for ${req.profileUser.username}`,
       currentPage: "followers",
       followers: followers,
       profileUsername: req.profileUser.username,
@@ -122,7 +124,7 @@ exports.profileFollowersScreen = async function(req, res) {
       counts: {postCount: req.postCount, followerCount: req.followerCount, followingCount: req.followingCount}
     })
   } catch {
-    res.render("404")
+    res.render({title: "Not Found"}, "404")
   }
 }
 
@@ -130,6 +132,7 @@ exports.profileFollowingScreen = async function(req, res) {
   try {
     let following = await Follow.getFollowingById(req.profileUser._id)
     res.render('profile-following', {
+      title: `Following for ${req.profileUser.username}`,
       currentPage: "following",
       following: following,
       profileUsername: req.profileUser.username,
@@ -139,6 +142,6 @@ exports.profileFollowingScreen = async function(req, res) {
       counts: {postCount: req.postCount, followerCount: req.followerCount, followingCount: req.followingCount}
     })
   } catch {
-    res.render("404")
+    res.render({title: "Not Found"}, "404")
   }
 }
